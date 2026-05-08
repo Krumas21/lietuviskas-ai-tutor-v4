@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Docs · Neuropetitorius</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lumina.css">
+<style>
+  /* layout */
+  .docs-layout{display:grid;grid-template-columns:240px 1fr 220px;gap:48px;margin-top:32px;align-items:flex-start}
+  @media(max-width:1080px){.docs-layout{grid-template-columns:240px 1fr;gap:32px}.toc{display:none}}
+  @media(max-width:760px){.docs-layout{grid-template-columns:1fr}.sidenav{position:relative;top:auto;max-height:none}}
+
+  /* sidenav */
+  .sidenav{position:sticky;top:120px;max-height:calc(100vh - 140px);overflow-y:auto;
+    padding-right:8px;font-size:13.5px}
+  .sidenav h6{margin:18px 0 8px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .sidenav h6:first-child{margin-top:0}
+  .sidenav ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:1px}
+  .sidenav a{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;color:var(--text-2);font-weight:500;transition:.15s}
+  .sidenav a:hover{background:rgba(108,99,255,.06);color:var(--text)}
+  .sidenav a.active{background:rgba(108,99,255,.1);color:var(--primary)}
+  .sidenav .method{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;letter-spacing:.04em;flex-shrink:0}
+  .sidenav .method.get{background:rgba(34,197,94,.15);color:#15803d}
+  .sidenav .method.post{background:rgba(108,99,255,.15);color:#5048d8}
+  .sidenav .method.del{background:rgba(239,68,68,.15);color:#b91c1c}
+  .sidenav .method.web{background:rgba(0,217,255,.15);color:#0091B0}
+
+  /* TOC */
+  .toc{position:sticky;top:120px;font-size:12.5px;border-left:1px solid var(--border);padding-left:18px}
+  .toc h6{margin:0 0 12px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .toc ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+  .toc a{color:var(--text-2);font-weight:500;line-height:1.4;display:block;padding:2px 0}
+  .toc a:hover{color:var(--text)}
+
+  /* article */
+  article{min-width:0;max-width:780px}
+  article h1{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0 0 16px}
+  article h2{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;margin:64px 0 14px;scroll-margin-top:120px}
+  article h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;margin:32px 0 10px;scroll-margin-top:120px}
+  article p{font-size:15.5px;line-height:1.7;color:var(--text-2);margin:0 0 14px}
+  article p strong{color:var(--text)}
+  article a:not(.btn){color:var(--primary);font-weight:500;text-decoration:underline;text-decoration-color:rgba(108,99,255,.3);text-underline-offset:3px}
+  article a:not(.btn):hover{text-decoration-color:var(--primary)}
+
+  .lede-doc{font-size:18px;color:var(--text-2);line-height:1.6;margin:0 0 32px}
+
+  code{font-family:'JetBrains Mono',monospace;font-size:13.5px;background:var(--surface);
+    padding:2px 6px;border-radius:5px;color:var(--text);font-weight:500}
+
+  /* code block */
+  .code{margin:18px 0 24px;background:#0F0F1A;color:#F0F0F6;border-radius:14px;
+    border:1px solid #24243A;overflow:hidden}
+  .code-h{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #24243A;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:#A0A0B8;font-weight:500}
+  .code-h .lang{padding:2px 8px;background:rgba(108,99,255,.2);color:#C4B5FD;border-radius:6px;letter-spacing:.04em;font-size:10px;font-weight:700;text-transform:uppercase}
+  .code-h .copy{appearance:none;border:0;background:transparent;color:#A0A0B8;font:inherit;font-size:11px;cursor:pointer;
+    padding:4px 8px;border-radius:6px;transition:.15s}
+  .code-h .copy:hover{background:rgba(255,255,255,.06);color:#F0F0F6}
+  .code pre{margin:0;padding:18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;overflow-x:auto;color:#F0F0F6}
+  .code .k{color:#C4B5FD}
+  .code .s{color:#86EFAC}
+  .code .c{color:#6B7280;font-style:italic}
+  .code .n{color:#7DD3FC}
+  .code .p{color:#F0ABFC}
+  .code .v{color:#FFD580}
+
+  /* endpoint header */
+  .endpoint{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);
+    border:1px solid var(--border);border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:14px;
+    margin:14px 0 12px;flex-wrap:wrap}
+  .endpoint .method{font-weight:700;padding:3px 10px;border-radius:6px;font-size:11.5px;letter-spacing:.04em}
+  .endpoint .method.get{background:rgba(34,197,94,.15);color:#15803d}
+  .endpoint .method.post{background:rgba(108,99,255,.15);color:#5048d8}
+  .endpoint .method.del{background:rgba(239,68,68,.15);color:#b91c1c}
+  .endpoint .path{color:var(--text);font-weight:500}
+
+  /* params table */
+  .params{width:100%;border-collapse:collapse;margin:14px 0 24px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff}
+  .params th,.params td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:top}
+  .params thead th{background:var(--surface);font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .params tr:last-child td{border-bottom:0}
+  .params td:first-child{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text);font-weight:500;white-space:nowrap}
+  .params td:nth-child(2){font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-2)}
+  .params td:nth-child(2) .req{display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(239,68,68,.1);color:#b91c1c;font-size:10px;font-weight:600;margin-left:6px;text-transform:uppercase;letter-spacing:.04em}
+  .params td:last-child{color:var(--text-2);font-size:13px;line-height:1.55;font-family:'Inter',sans-serif}
+
+  /* callout */
+  .callout{padding:18px 20px;border-radius:14px;margin:14px 0 24px;display:flex;gap:14px;align-items:flex-start}
+  .callout.info{background:rgba(0,217,255,.06);border:1px solid rgba(0,217,255,.25)}
+  .callout.warn{background:rgba(255,184,0,.06);border:1px solid rgba(255,184,0,.25)}
+  .callout.tip{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.25)}
+  .callout .ico{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;font-weight:700;font-size:13px;font-family:'Space Grotesk',sans-serif}
+  .callout.info .ico{background:rgba(0,217,255,.18);color:#0091B0}
+  .callout.warn .ico{background:rgba(255,184,0,.18);color:#a86a00}
+  .callout.tip .ico{background:rgba(34,197,94,.18);color:#15803d}
+  .callout p{margin:0;font-size:14px;line-height:1.6;color:var(--text-2)}
+  .callout p strong{color:var(--text)}
+
+  /* search */
+  .docs-hero{padding:80px 0 32px}
+  .docs-hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5vw,56px);font-weight:700;letter-spacing:-0.025em;margin:14px 0 0;line-height:1.05}
+  .docs-hero p.lede{margin:18px 0 0;color:var(--text-2);font-size:17px;max-width:60ch;line-height:1.55}
+  .search{margin-top:28px;max-width:520px;display:flex;align-items:center;gap:10px;padding:0 16px;height:48px;
+    border:1px solid var(--border);border-radius:14px;background:#fff;
+    box-shadow:0 4px 14px -8px rgba(15,15,26,.1)}
+  .search:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(108,99,255,.15)}
+  .search svg{color:var(--muted);flex-shrink:0}
+  .search input{flex:1;border:0;background:transparent;font:inherit;font-size:14.5px;outline:none;color:var(--text)}
+  .search kbd{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:2px 7px;background:var(--surface);border:1px solid var(--border);border-radius:5px;color:var(--text-2)}
+
+  /* quick start cards */
+  .qs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 24px}
+  @media(max-width:640px){.qs-grid{grid-template-columns:1fr}}
+  .qs{padding:20px;background:#fff;border:1px solid var(--border);border-radius:16px;display:flex;flex-direction:column;gap:8px;transition:.2s;text-decoration:none!important}
+  .qs:hover{transform:translateY(-2px);border-color:var(--primary);box-shadow:0 14px 30px -16px rgba(108,99,255,.3)}
+  .qs .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(108,99,255,.1);color:var(--primary)}
+  .qs h4{margin:0;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--text)}
+  .qs p{margin:0;font-size:13px;color:var(--text-2);line-height:1.5}
+</style>
+</head>
+<body data-page="docs">
+<div class="ambient"><div class="blob b1" style="opacity:.25"></div></div>
+
+<div data-slot="nav"></div>
+
+<main>
+<section class="wrap docs-hero">
+  <span class="pill">📘 Developer documentation · v1</span>
+  <h1>Build training systems on top of Neuropetitorius.</h1>
+  <p class="lede">A REST API, a few SDKs, and an embeddable dashboard. Pipe sources in. Get courses, lessons, and learner progress out.</p>
+  <label class="search">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="Search docs… (try: webhooks, SCORM, audio)" />
+    <kbd>⌘K</kbd>
+  </label>
+</section>
+
+<section class="wrap" style="padding:0 32px 120px">
+  <div class="docs-layout">
+    <!-- Sidenav -->
+    <aside class="sidenav">
+      <h6>Get started</h6>
+      <ul>
+        <li><a href="#intro" class="active">Introduction</a></li>
+        <li><a href="#install">Install &amp; auth</a></li>
+        <li><a href="#first">Your first course</a></li>
+        <li><a href="#concepts">Core concepts</a></li>
+      </ul>
+      <h6 id="api">API reference</h6>
+      <ul>
+        <li><a href="#courses-create"><span class="method post">POST</span> Create course</a></li>
+        <li><a href="#courses-get"><span class="method get">GET</span> Retrieve course</a></li>
+        <li><a href="#courses-list"><span class="method get">GET</span> List courses</a></li>
+        <li><a href="#courses-delete"><span class="method del">DEL</span> Delete course</a></li>
+        <li><a href="#lessons"><span class="method get">GET</span> Lessons</a></li>
+        <li><a href="#learners"><span class="method post">POST</span> Learners</a></li>
+        <li><a href="#progress"><span class="method get">GET</span> Progress</a></li>
+        <li><a href="#webhooks"><span class="method web">HOOK</span> Webhooks</a></li>
+      </ul>
+      <h6>Guides</h6>
+      <ul>
+        <li><a href="#audio">Audio sources</a></li>
+        <li><a href="#scorm">SCORM &amp; xAPI export</a></li>
+        <li><a href="#embed">Embed the dashboard</a></li>
+        <li><a href="#errors">Errors &amp; rate limits</a></li>
+      </ul>
+    </aside>
+
+    <!-- Article -->
+    <article>
+      <h1 id="intro">Introduction</h1>
+      <p class="lede-doc">Neuropetitorius is a B2B API that takes sparse business content — manuals, PDFs, recordings — and returns a complete, structured training course. This is the documentation for the v1 API.</p>
+
+      <p>Most teams use <strong>one of three integrations</strong>: drop into the dashboard for end-to-end course building, embed our learner UI on a custom domain, or use the API directly to render lessons inside your own product. Pick the path that matches the kind of product you're shipping.</p>
+
+      <div class="qs-grid">
+        <a href="#first" class="qs">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg></div>
+          <h4>Quickstart</h4>
+          <p>From zero to your first course in 5 minutes.</p>
+        </a>
+        <a href="#api" class="qs">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7a5 5 0 0 1 0-10h2"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+          <h4>API reference</h4>
+          <p>Every endpoint, every parameter, every response.</p>
+        </a>
+        <a href="#embed" class="qs">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+          <h4>Embed the UI</h4>
+          <p>Drop the learner dashboard into your product.</p>
+        </a>
+      </div>
+
+      <h2 id="install">Install &amp; authenticate</h2>
+      <p>The API base URL is <code>https://api.neuropetitorius.com/v1</code>. All requests require a Bearer token — generate one in the dashboard under <em>Settings → API keys</em>. Keep it server-side; client-side use is rejected.</p>
+
+      <div class="code">
+        <div class="code-h"><span class="lang">bash</span><button class="copy">Copy</button></div>
+<pre><span class="c"># Set your key in an env var, never commit it</span>
+<span class="k">export</span> NPT_KEY=<span class="s">"npt_sk_live_…"</span>
+
+<span class="c"># Smoke test</span>
+<span class="k">curl</span> https://api.neuropetitorius.com/v1/me \
+  -H <span class="s">"Authorization: Bearer $NPT_KEY"</span></pre>
+      </div>
+
+      <p>Or install one of the official SDKs:</p>
+
+      <div class="code">
+        <div class="code-h"><span class="lang">terminal</span><button class="copy">Copy</button></div>
+<pre><span class="c"># Node / TypeScript</span>
+<span class="k">npm</span> install @neuropetitorius/sdk
+
+<span class="c"># Python</span>
+<span class="k">pip</span> install neuropetitorius
+
+<span class="c"># Go</span>
+<span class="k">go get</span> github.com/neuropetitorius/go-sdk</pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="ico">★</div>
+        <p><strong>Test mode is free.</strong> Use <code>npt_sk_test_…</code> keys to call any endpoint with no charge or learner-quota impact. Test courses are flagged in the dashboard and deleted after 30 days.</p>
+      </div>
+
+      <h2 id="first">Your first course</h2>
+      <p>The shortest path: POST a folder of source files to <code>/v1/courses</code>, listen for the <code>course.ready</code> webhook, and fetch the lessons.</p>
+
+      <div class="code">
+        <div class="code-h"><span class="lang">node</span><button class="copy">Copy</button></div>
+<pre><span class="k">import</span> { Neuropetitorius } <span class="k">from</span> <span class="s">"@neuropetitorius/sdk"</span>;
+<span class="k">const</span> npt = <span class="k">new</span> <span class="p">Neuropetitorius</span>(process.env.<span class="v">NPT_KEY</span>);
+
+<span class="k">const</span> course = <span class="k">await</span> npt.courses.create({
+  sources: [
+    { <span class="n">type</span>: <span class="s">"file"</span>, <span class="n">path</span>: <span class="s">"./cashier_handbook.pdf"</span> },
+    { <span class="n">type</span>: <span class="s">"file"</span>, <span class="n">path</span>: <span class="s">"./manager-tips.m4a"</span> },
+  ],
+  target_audience: <span class="s">"front_of_house_new_hires"</span>,
+  output_language: <span class="s">"en"</span>,
+});
+
+<span class="c">// Course is built async — listen for the webhook</span>
+console.<span class="p">log</span>(course.<span class="v">id</span>, course.<span class="v">status</span>); <span class="c">// "crs_8h2k…", "building"</span></pre>
+      </div>
+
+      <h2 id="concepts">Core concepts</h2>
+      <p>Three objects to know:</p>
+      <ul style="font-size:15px;line-height:1.7;color:var(--text-2);padding-left:20px">
+        <li><strong>Course</strong> — a top-level training program. Has lessons, quizzes, and learners.</li>
+        <li><strong>Source</strong> — anything you upload (PDF, audio, etc.). Sources are immutable; reprocess by adding new ones.</li>
+        <li><strong>Learner</strong> — a person taking the course. Each has progress, scores, and an event stream.</li>
+      </ul>
+
+      <!-- API REFERENCE -->
+      <h2 id="courses-create">Create a course</h2>
+      <div class="endpoint">
+        <span class="method post">POST</span>
+        <span class="path">/v1/courses</span>
+      </div>
+      <p>Submit one or more sources and get back a building course. The build is async; subscribe to <code>course.ready</code> or poll the retrieve endpoint.</p>
+
+      <h3>Body parameters</h3>
+      <table class="params">
+        <thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>sources</td><td>array&lt;Source&gt; <span class="req">req</span></td><td>1–50 source objects. Each is either a file upload or a URL.</td></tr>
+          <tr><td>target_audience</td><td>string</td><td>Free-text descriptor of who's taking the course. Improves lesson tone and depth.</td></tr>
+          <tr><td>output_language</td><td>string</td><td>ISO 639-1 code (<code>en</code>, <code>lt</code>, <code>de</code>, …). Default: detected from sources.</td></tr>
+          <tr><td>generate_quizzes</td><td>boolean</td><td>Default <code>true</code>. Set <code>false</code> for read-only courses.</td></tr>
+          <tr><td>metadata</td><td>object</td><td>Up to 16 key-value pairs. Returned on every course response.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Returns</h3>
+      <p>A <code>Course</code> object with <code>status: "building"</code>. Once ready, all lesson content is accessible at <code>/v1/courses/:id/lessons</code>.</p>
+
+      <div class="code">
+        <div class="code-h"><span class="lang">200 OK</span><button class="copy">Copy</button></div>
+<pre>{
+  <span class="n">"id"</span>: <span class="s">"crs_8h2k4mZ9"</span>,
+  <span class="n">"object"</span>: <span class="s">"course"</span>,
+  <span class="n">"status"</span>: <span class="s">"building"</span>,
+  <span class="n">"created"</span>: <span class="v">1746710400</span>,
+  <span class="n">"target_audience"</span>: <span class="s">"front_of_house_new_hires"</span>,
+  <span class="n">"output_language"</span>: <span class="s">"en"</span>,
+  <span class="n">"estimate_seconds"</span>: <span class="v">2940</span>,
+  <span class="n">"sources"</span>: [
+    { <span class="n">"id"</span>: <span class="s">"src_p4q…"</span>, <span class="n">"type"</span>: <span class="s">"pdf"</span>, <span class="n">"size_bytes"</span>: <span class="v">2456789</span> },
+    { <span class="n">"id"</span>: <span class="s">"src_a9k…"</span>, <span class="n">"type"</span>: <span class="s">"audio"</span>, <span class="n">"duration_seconds"</span>: <span class="v">1380</span> }
+  ],
+  <span class="n">"metadata"</span>: {}
+}</pre>
+      </div>
+
+      <h2 id="courses-get">Retrieve a course</h2>
+      <div class="endpoint">
+        <span class="method get">GET</span>
+        <span class="path">/v1/courses/{course_id}</span>
+      </div>
+      <p>Returns the course with its full lesson tree once <code>status</code> is <code>ready</code>.</p>
+
+      <h2 id="webhooks">Webhooks</h2>
+      <p>Subscribe to events instead of polling. Configure endpoints under <em>Settings → Webhooks</em> in the dashboard. We sign every request with HMAC-SHA256 in the <code>NPT-Signature</code> header.</p>
+
+      <table class="params">
+        <thead><tr><th>Event</th><th>When</th><th>Payload</th></tr></thead>
+        <tbody>
+          <tr><td>course.ready</td><td>Build completes</td><td>Full <code>Course</code> object</td></tr>
+          <tr><td>course.failed</td><td>Build fails</td><td>Course + error details</td></tr>
+          <tr><td>learner.completed</td><td>Learner finishes course</td><td>Learner + final scores</td></tr>
+          <tr><td>quiz.failed</td><td>Learner fails a quiz twice</td><td>Learner + quiz attempts</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <div class="ico">!</div>
+        <p><strong>Verify signatures.</strong> Always verify the <code>NPT-Signature</code> header. Unsigned requests should be rejected — anyone could otherwise POST fake events to your endpoint.</p>
+      </div>
+
+      <h2 id="audio">Audio sources</h2>
+      <p>Audio is a first-class source type. We auto-transcribe (whisper-class accuracy), detect speaker turns, and chunk by topic before lesson generation.</p>
+
+      <p><strong>Supported formats:</strong> M4A, MP3, WAV, FLAC, OGG, MP4 (audio track). Files up to 2 GB on Studio, larger on Enterprise.</p>
+
+      <h2 id="errors">Errors &amp; rate limits</h2>
+      <p>Standard HTTP codes. Errors return JSON with <code>error.code</code>, <code>error.message</code>, and a <code>request_id</code> for support tickets.</p>
+
+      <table class="params">
+        <thead><tr><th>Code</th><th>Status</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>400</td><td>bad_request</td><td>Malformed JSON or invalid parameters</td></tr>
+          <tr><td>401</td><td>unauthorized</td><td>Missing or invalid API key</td></tr>
+          <tr><td>402</td><td>quota_exceeded</td><td>Plan limit reached — upgrade or wait for cycle reset</td></tr>
+          <tr><td>404</td><td>not_found</td><td>Resource doesn't exist or was deleted</td></tr>
+          <tr><td>429</td><td>rate_limit</td><td>Too many requests — back off and retry with exponential delay</td></tr>
+          <tr><td>500</td><td>server_error</td><td>Something broke on our side. Retry safe.</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>Rate limits</strong> are 60 requests/minute on Studio, custom on Enterprise. Webhook deliveries don't count against your limit.</p>
+
+      <div class="callout info">
+        <div class="ico">i</div>
+        <p>Building something specific and the docs aren't covering it? Email <a href="mailto:devs@neuropetitorius.com">devs@neuropetitorius.com</a> — a real engineer reads every message and replies within a business day.</p>
+      </div>
+    </article>
+
+    <!-- TOC -->
+    <aside class="toc">
+      <h6>On this page</h6>
+      <ul>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#install">Install &amp; auth</a></li>
+        <li><a href="#first">Your first course</a></li>
+        <li><a href="#concepts">Core concepts</a></li>
+        <li><a href="#courses-create">Create course</a></li>
+        <li><a href="#courses-get">Retrieve course</a></li>
+        <li><a href="#webhooks">Webhooks</a></li>
+        <li><a href="#audio">Audio sources</a></li>
+        <li><a href="#errors">Errors &amp; rate limits</a></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+</main>
+
+<div data-slot="footer"></div>
+<script src="shared.js"></script>
+<script>
+  // Sidenav active state on scroll
+  (function(){
+    const links = document.querySelectorAll('.sidenav a, .toc a');
+    const targets = [...links].map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+    const setActive = (id) => links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    const obs = new IntersectionObserver((entries) => {
+      const visible = entries.filter(e => e.isIntersecting).sort((a,b)=>a.boundingClientRect.top - b.boundingClientRect.top);
+      if(visible[0]) setActive(visible[0].target.id);
+    }, { rootMargin: '-100px 0px -60% 0px', threshold: 0 });
+    targets.forEach(t => obs.observe(t));
+  })();
+
+  // Copy buttons
+  document.querySelectorAll('.code .copy').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const code = btn.closest('.code').querySelector('pre').innerText;
+      navigator.clipboard.writeText(code).then(()=>{
+        const orig = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(()=>btn.textContent = orig, 1200);
+      });
+    });
+  });
+</script>
+</body>
+</html>

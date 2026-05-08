@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pricing · Neuropetitorius</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lumina.css">
+<style>
+  /* billing toggle */
+  .toggle{display:inline-flex;padding:4px;background:var(--surface);border:1px solid var(--border);border-radius:999px;margin-top:24px;position:relative}
+  .toggle button{appearance:none;border:0;background:transparent;color:var(--text-2);font:inherit;font-weight:600;font-size:13px;
+    padding:8px 18px;border-radius:999px;position:relative;z-index:1;transition:color .2s}
+  .toggle button[aria-pressed="true"]{color:var(--text)}
+  .toggle .thumb{position:absolute;top:4px;bottom:4px;border-radius:999px;background:#fff;
+    box-shadow:0 1px 2px rgba(15,15,26,.1),0 0 0 1px var(--border);transition:.25s cubic-bezier(.3,.7,.4,1)}
+  .save{margin-left:8px;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,.15);color:#15803d;font-size:11px;font-weight:600}
+
+  /* plan grid */
+  .plans{margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:980px){.plans{grid-template-columns:1fr;gap:16px}}
+  .plan{padding:32px;background:#fff;border:1px solid var(--border);border-radius:24px;
+    display:flex;flex-direction:column;gap:18px;transition:.25s;position:relative}
+  .plan:hover{transform:translateY(-2px);box-shadow:0 30px 60px -30px rgba(15,15,26,.18),0 4px 16px -4px rgba(15,15,26,.06)}
+  .plan.featured{background:linear-gradient(180deg,#15151F,#0F0F1A);color:#fff;border-color:transparent;
+    box-shadow:0 30px 80px -30px rgba(108,99,255,.5),0 4px 20px -8px rgba(108,99,255,.3)}
+  .plan.featured::before{content:"";position:absolute;inset:0;border-radius:24px;padding:1px;
+    background:linear-gradient(135deg,#6C63FF,#00D9FF,#6C63FF);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+  .plan-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .plan h3{margin:0;font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.01em}
+  .plan .blurb{margin:0;font-size:13.5px;color:var(--text-2);line-height:1.5}
+  .plan.featured .blurb{color:rgba(240,240,246,.7)}
+  .plan .tag{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.02em;
+    background:rgba(108,99,255,.1);color:var(--primary);border:1px solid rgba(108,99,255,.2);flex-shrink:0}
+  .plan.featured .tag{background:rgba(0,217,255,.18);color:#7FE8FF;border-color:rgba(0,217,255,.3)}
+  .price{display:flex;align-items:baseline;gap:6px;margin:8px 0}
+  .price b{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+  .price span{font-size:14px;color:var(--text-2)}
+  .plan.featured .price span{color:rgba(240,240,246,.6)}
+  .plan ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;flex:1}
+  .plan li{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;color:var(--text-2)}
+  .plan.featured li{color:rgba(240,240,246,.85)}
+  .plan li svg{width:16px;height:16px;color:var(--tertiary);flex-shrink:0;margin-top:3px}
+  .plan li b{font-weight:600;color:var(--text)}
+  .plan.featured li b{color:#fff}
+  .plan .cta{margin-top:8px;display:flex;justify-content:center;align-items:center;width:100%;
+    height:46px;padding:0 22px;border-radius:999px;font-weight:600;font-size:14.5px;border:1px solid transparent;transition:.2s}
+  .plan .cta.primary{background:var(--primary);color:#fff;
+    box-shadow:0 8px 24px -8px rgba(108,99,255,.6)}
+  .plan .cta.primary:hover{transform:translateY(-1px)}
+  .plan .cta.ghost{background:transparent;color:var(--text);border-color:var(--border)}
+  .plan .cta.ghost:hover{border-color:var(--primary);color:var(--primary)}
+  .plan.featured .cta.primary{background:#fff;color:var(--text)}
+  .plan.featured .cta.primary:hover{background:rgba(255,255,255,.92)}
+
+  /* segment cards */
+  .segments{margin-top:120px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:900px){.segments{grid-template-columns:1fr}}
+  .seg{padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:24px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:120px}
+  .seg .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#fff;border:1px solid var(--border);color:var(--primary)}
+  .seg .ic.cyan{color:#0091B0}
+  .seg .ic.green{color:var(--tertiary)}
+  .seg h3{margin:0;font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.01em}
+  .seg p{margin:0;color:var(--text-2);font-size:14.5px;line-height:1.55}
+  .seg .price-tag{margin-top:auto;padding-top:18px;border-top:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:baseline}
+  .seg .price-tag b{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text);font-weight:500}
+  .seg .price-tag span{font-size:12px;color:var(--muted)}
+
+  /* compare table */
+  .compare{margin-top:120px}
+  .cmp-tbl{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:24px;overflow:hidden}
+  .cmp-tbl th,.cmp-tbl td{padding:18px 20px;text-align:left;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle}
+  .cmp-tbl thead th{background:var(--surface);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .cmp-tbl tbody th{font-weight:500;color:var(--text)}
+  .cmp-tbl td{font-family:'JetBrains Mono',monospace;color:var(--text);font-size:13px}
+  .cmp-tbl td.ck svg{width:18px;height:18px;color:var(--tertiary)}
+  .cmp-tbl td.dash{color:var(--muted)}
+  .cmp-tbl tr:last-child th,.cmp-tbl tr:last-child td{border-bottom:0}
+  .cmp-tbl .row-section td,.cmp-tbl .row-section th{background:var(--surface);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 20px}
+  @media(max-width:760px){.cmp-tbl{display:block;overflow-x:auto;white-space:nowrap}}
+
+  /* faq */
+  .faq{margin-top:120px;display:grid;grid-template-columns:1fr 2fr;gap:48px}
+  @media(max-width:760px){.faq{grid-template-columns:1fr}}
+  details{padding:18px 22px;border:1px solid var(--border);border-radius:16px;margin-bottom:8px;background:#fff;cursor:pointer}
+  details[open]{border-color:var(--primary)}
+  summary{font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;gap:14px;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:18px;font-weight:300}
+  details[open] summary::after{content:"−"}
+  details p{margin:12px 0 0;color:var(--text-2);font-size:14.5px;line-height:1.6}
+</style>
+</head>
+<body data-page="pricing">
+<div class="ambient"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<div data-slot="nav"></div>
+
+<main>
+<section class="page-hero wrap">
+  <span class="pill">💸 Honest pricing · real free tier</span>
+  <h1 class="display">Start free. Pay when you outgrow it. Don't talk to sales.</h1>
+  <p class="lede">Three plans. Clear limits. No "contact us for pricing" until you actually need a custom contract. Annual billing saves 20%.</p>
+
+  <div class="toggle" id="bill" role="tablist">
+    <span class="thumb" id="thumb"></span>
+    <button aria-pressed="true" data-bill="monthly">Monthly</button>
+    <button aria-pressed="false" data-bill="annual">Annual<span class="save">−20%</span></button>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:0">
+  <div class="plans">
+    <!-- Starter -->
+    <div class="plan">
+      <div class="plan-h">
+        <div>
+          <h3>Starter</h3>
+        </div>
+        <span class="tag">Free</span>
+      </div>
+      <p class="blurb">Try the full pipeline on one course. No credit card.</p>
+      <div class="price"><b>€0</b><span>for 1 month</span></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>1 course</b>, up to 30 lessons</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>10 learners</b> on the dashboard</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Full editor &amp; quiz generation</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>EU data residency, GDPR ready</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Community support</span></li>
+      </ul>
+      <a href="#" class="cta ghost">Start free</a>
+    </div>
+
+    <!-- Studio (featured) -->
+    <div class="plan featured">
+      <div class="plan-h">
+        <div>
+          <h3 style="color:#fff">Studio</h3>
+        </div>
+        <span class="tag">Most popular</span>
+      </div>
+      <p class="blurb">For teams running real onboarding. Generous limits, full API access.</p>
+      <div class="price"><b data-monthly="€89" data-annual="€71">€89</b><span data-monthly="/ month" data-annual="/ month, billed annually">/ month</span></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Unlimited courses &amp; lessons</b></span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Up to 100 learners</b>, then €1/learner</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Full API</b> + webhooks + SDKs</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Audio transcription &amp; translation</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>SCORM 1.2 &amp; xAPI export</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Priority email support</span></li>
+      </ul>
+      <a href="#" class="cta primary">Start 14-day trial</a>
+    </div>
+
+    <!-- Enterprise -->
+    <div class="plan">
+      <div class="plan-h">
+        <div>
+          <h3>Enterprise</h3>
+        </div>
+        <span class="tag">Custom</span>
+      </div>
+      <p class="blurb">Volume, SSO, custom DPAs, on-prem options. For when free-tier won't cut it.</p>
+      <div class="price"><b style="font-size:32px">Let's talk</b></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Unlimited learners</b> &amp; courses</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>SSO</b> (SAML, Okta, Azure AD)</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Custom DPA &amp; security review</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>White-label learner UI</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Dedicated solution engineer</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>99.9% SLA, on-prem option</span></li>
+      </ul>
+      <a href="#enterprise" class="cta ghost">Talk to founders</a>
+    </div>
+  </div>
+</section>
+
+<!-- Segments -->
+<section class="wrap" style="padding-top:0">
+  <div class="sec-head">
+    <span class="eyebrow">Pricing by use case</span>
+    <h2 class="display sec-h">Different teams, different commitments.</h2>
+    <p class="sec-sub">The plans above cover most teams. If you fit one of these segments, we have specific pricing patterns that match how you actually buy.</p>
+  </div>
+
+  <div class="segments">
+    <div class="seg" id="smb">
+      <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 7h18"/><path d="M5 21V7l7-4 7 4v14"/><rect x="9" y="12" width="6" height="9"/></svg></div>
+      <h3>For SMB &amp; operations</h3>
+      <p>Cafés, retail, agencies, clinics. Teams of 10–250 where one person owns onboarding among twelve other things.</p>
+      <p>Studio plan covers most. We bill annually so you don't think about it twice.</p>
+      <div class="price-tag"><b>From €71/mo</b><span>annual billing</span></div>
+    </div>
+    <div class="seg" id="edtech">
+      <div class="ic cyan"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+      <h3>For EdTech platforms</h3>
+      <p>You're embedding learning into your product. We meter on API calls and learners — so you only pay for active usage, not seats you didn't sell.</p>
+      <p>Volume tiers kick in past 1k learners.</p>
+      <div class="price-tag"><b>Usage-based</b><span>API + per-learner</span></div>
+    </div>
+    <div class="seg" id="enterprise">
+      <div class="ic green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M3 9h18"/></svg></div>
+      <h3>For Enterprise</h3>
+      <p>Mid-market and up. Procurement, security review, custom DPA, SSO. We move at your pace, not ours.</p>
+      <p>Annual contracts, payment terms negotiable.</p>
+      <div class="price-tag"><b>Custom contract</b><span>EU + global</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Compare -->
+<section class="wrap compare" style="padding-top:0">
+  <div class="sec-head">
+    <span class="eyebrow">Plan comparison</span>
+    <h2 class="display sec-h">All the limits, in one place.</h2>
+  </div>
+
+  <table class="cmp-tbl">
+    <thead>
+      <tr>
+        <th>&nbsp;</th>
+        <th>Starter</th>
+        <th>Studio</th>
+        <th>Enterprise</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row-section"><th colspan="4">Building</th></tr>
+      <tr><th>Courses</th><td>1</td><td>Unlimited</td><td>Unlimited</td></tr>
+      <tr><th>Lessons / course</th><td>30</td><td>Unlimited</td><td>Unlimited</td></tr>
+      <tr><th>Source upload size</th><td>50 MB</td><td>2 GB</td><td>Custom</td></tr>
+      <tr><th>Audio transcription</th><td>30 min/mo</td><td>20 hrs/mo</td><td>Unlimited</td></tr>
+
+      <tr class="row-section"><th colspan="4">Delivery</th></tr>
+      <tr><th>Learners</th><td>10</td><td>100, then €1 each</td><td>Unlimited</td></tr>
+      <tr><th>Custom domain</th><td class="dash">—</td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><th>White-label</th><td class="dash">—</td><td class="dash">—</td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><th>SCORM / xAPI export</th><td class="dash">—</td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+
+      <tr class="row-section"><th colspan="4">Developers</th></tr>
+      <tr><th>API access</th><td class="dash">—</td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><th>Webhooks</th><td class="dash">—</td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><th>Rate limit</th><td class="dash">—</td><td>60 req/min</td><td>Custom</td></tr>
+
+      <tr class="row-section"><th colspan="4">Security &amp; support</th></tr>
+      <tr><th>EU data residency</th><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><th>SSO (SAML / Okta)</th><td class="dash">—</td><td class="dash">—</td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><th>Custom DPA</th><td class="dash">—</td><td class="dash">—</td><td class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><th>Support</th><td>Community</td><td>Priority email</td><td>Dedicated SE + SLA</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- FAQ -->
+<section class="wrap" style="padding-top:0">
+  <div class="faq">
+    <div>
+      <span class="eyebrow">Pricing FAQ</span>
+      <h2 class="display sec-h" style="font-size:34px">Read this before you ask sales.</h2>
+    </div>
+    <div>
+      <details open>
+        <summary>Is the free tier really free? What's the catch?</summary>
+        <p>Really free, forever. The catch: you're capped at one course, 30 lessons, and 10 learners. That's enough to ship a real onboarding for a small team. Past that, you'll want Studio.</p>
+      </details>
+      <details>
+        <summary>What happens if I exceed my learner limit on Studio?</summary>
+        <p>Each learner past 100 is €1/month, billed at the end of the cycle. We'll never block a learner from logging in mid-course because of a limit — we trust you to true up later.</p>
+      </details>
+      <details>
+        <summary>Do you offer non-profit or education discounts?</summary>
+        <p>Yes — 50% off Studio for registered non-profits and accredited educational institutions. Email <span class="mono" style="background:var(--surface);padding:2px 8px;border-radius:6px;font-size:13px">edu@neuropetitorius.com</span> with proof and we'll set it up.</p>
+      </details>
+      <details>
+        <summary>Can I cancel any time?</summary>
+        <p>Monthly plans cancel at the end of the cycle. Annual plans are non-refundable past the 14-day trial. We don't auto-renew without warning — you'll get an email 30 days before your renewal.</p>
+      </details>
+      <details>
+        <summary>What about VAT?</summary>
+        <p>Prices are exclusive of VAT. EU customers with a valid VAT number aren't charged VAT (reverse charge). For everyone else, VAT is added at your local rate.</p>
+      </details>
+    </div>
+  </div>
+</section>
+</main>
+
+<div data-slot="footer"></div>
+<script src="shared.js"></script>
+<script>
+  // billing toggle
+  (function(){
+    const wrap = document.getElementById('bill');
+    const thumb = document.getElementById('thumb');
+    const btns = wrap.querySelectorAll('button');
+    const featuredPrice = document.querySelector('.plan.featured .price b');
+    const featuredCadence = document.querySelector('.plan.featured .price span');
+    const setActive = (idx) => {
+      btns.forEach((b,i)=>b.setAttribute('aria-pressed', i===idx?'true':'false'));
+      const r = btns[idx].getBoundingClientRect();
+      const wr = wrap.getBoundingClientRect();
+      thumb.style.left = (r.left-wr.left)+'px';
+      thumb.style.width = r.width+'px';
+      const mode = btns[idx].dataset.bill;
+      featuredPrice.textContent = featuredPrice.dataset[mode];
+      featuredCadence.textContent = featuredCadence.dataset[mode];
+    };
+    btns.forEach((b,i)=>b.addEventListener('click',()=>setActive(i)));
+    setActive(0);
+    window.addEventListener('resize',()=>{
+      const idx = [...btns].findIndex(b=>b.getAttribute('aria-pressed')==='true');
+      setActive(idx<0?0:idx);
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>How it works · Neuropetitorius</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lumina.css">
+<style>
+  /* timeline */
+  .timeline{position:relative;display:grid;grid-template-columns:140px 1fr;gap:48px;margin-top:32px}
+  @media(max-width:760px){.timeline{grid-template-columns:1fr;gap:24px}}
+  .tl-rail{position:relative}
+  .tl-rail::before{content:"";position:absolute;left:50%;top:24px;bottom:24px;width:1px;
+    background:linear-gradient(180deg,var(--primary),var(--secondary),var(--tertiary))}
+  @media(max-width:760px){.tl-rail{display:none}}
+  .tl-step{position:sticky;top:120px;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .tl-num{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+    background:#fff;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);font-size:14px;
+    box-shadow:0 4px 14px -8px rgba(15,15,26,.2);position:relative;z-index:1}
+  .tl-step.active .tl-num{background:var(--primary);color:#fff;border-color:transparent}
+  .tl-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+
+  .tl-body{display:flex;flex-direction:column;gap:96px}
+  .tl-block h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3.6vw,42px);font-weight:700;letter-spacing:-0.02em;line-height:1.05}
+  .tl-block .lede{margin:14px 0 0;color:var(--text-2);font-size:17px;line-height:1.6;max-width:60ch}
+  .tl-block .demo{margin-top:28px}
+
+  /* upload demo */
+  .up-demo{padding:24px}
+  .up-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.up-grid{grid-template-columns:1fr}}
+  .up-cell{padding:18px;border-radius:16px;background:var(--surface);border:1px dashed var(--border);
+    display:flex;flex-direction:column;gap:6px;font-size:13px}
+  .up-cell .ftype{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+  .up-cell .ftype i{width:8px;height:8px;border-radius:2px;background:var(--primary)}
+  .up-cell.cyan .ftype i{background:var(--secondary)}
+  .up-cell.green .ftype i{background:var(--tertiary)}
+  .up-cell .name{color:var(--text);font-weight:500}
+  .up-cell .meta{color:var(--muted);font-size:11.5px}
+  .up-cell .quote{color:var(--text-2);font-style:italic;line-height:1.5;margin-top:6px;font-size:12.5px}
+
+  /* gaps demo */
+  .gaps{padding:24px}
+  .gaps-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .gaps-h b{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600}
+  .gaps-h span{font-size:12px;color:var(--muted)}
+  .gap-row{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border:1px solid var(--border);border-radius:14px;margin-bottom:8px;background:#fff}
+  .gap-row .ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;
+    background:rgba(0,217,255,.12);color:#0091B0}
+  .gap-row b{display:block;font-size:14px;font-weight:600;margin-bottom:2px}
+  .gap-row p{margin:0;color:var(--text-2);font-size:12.5px;line-height:1.5}
+  .gap-row .answer-cta{margin-top:8px;display:inline-flex;gap:6px;align-items:center;font-size:12px;color:var(--primary);font-weight:600}
+
+  /* learn demo */
+  .learn{padding:0;overflow:hidden}
+  .learn-h{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .learn-h b{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700}
+  .learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  @media(max-width:640px){.learn-grid{grid-template-columns:1fr}}
+  .learn-col{padding:22px}
+  .learn-col + .learn-col{border-left:1px solid var(--border)}
+  @media(max-width:640px){.learn-col + .learn-col{border-left:0;border-top:1px solid var(--border)}}
+  .learn-col h4{margin:0 0 14px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .l-lesson{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13.5px}
+  .l-lesson .num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);width:22px}
+  .l-lesson b{font-weight:500}
+  .l-lesson .dur{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+  .quiz{background:var(--surface);border-radius:14px;padding:16px;margin-top:8px}
+  .quiz .qh{font-size:12.5px;color:var(--text);margin:0 0 10px;font-weight:600}
+  .quiz-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:#fff;border:1px solid var(--border);margin-bottom:6px;font-size:12.5px}
+  .quiz-opt.correct{border-color:var(--tertiary);background:rgba(34,197,94,.06)}
+  .quiz-opt .dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0}
+  .quiz-opt.correct .dot{background:var(--tertiary);border-color:var(--tertiary);position:relative}
+  .quiz-opt.correct .dot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:#fff}
+
+  /* spec table */
+  .spec{margin-top:120px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:24px;overflow:hidden;background:#fff}
+  @media(max-width:760px){.spec{grid-template-columns:1fr}}
+  .spec-row{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+  .spec-row:nth-child(odd){border-right:1px solid var(--border)}
+  @media(max-width:760px){.spec-row:nth-child(odd){border-right:0}}
+  .spec-row:nth-last-child(-n+2){border-bottom:0}
+  @media(max-width:760px){.spec-row{border-bottom:1px solid var(--border)!important}.spec-row:last-child{border-bottom:0!important}}
+  .spec-row dt{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+  .spec-row dd{margin:0;font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;letter-spacing:-0.015em}
+  .spec-row dd small{display:block;margin-top:4px;font-family:'Inter',sans-serif;font-size:13px;font-weight:400;color:var(--text-2);letter-spacing:0;line-height:1.5}
+
+  /* code block */
+  .code{margin-top:24px;background:#0F0F1A;color:#F0F0F6;border-radius:18px;padding:22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;overflow-x:auto}
+  .code .k{color:#C4B5FD}
+  .code .s{color:#86EFAC}
+  .code .c{color:#6B7280}
+  .code .n{color:#7DD3FC}
+
+  /* faq mini */
+  .faq{margin-top:120px;display:grid;grid-template-columns:1fr 2fr;gap:48px}
+  @media(max-width:760px){.faq{grid-template-columns:1fr}}
+  details{padding:18px 22px;border:1px solid var(--border);border-radius:16px;margin-bottom:8px;background:#fff;cursor:pointer}
+  details[open]{border-color:var(--primary)}
+  summary{font-weight:600;font-size:15.5px;list-style:none;display:flex;justify-content:space-between;gap:14px;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:18px;font-weight:300;transition:transform .2s}
+  details[open] summary::after{content:"−"}
+  details p{margin:12px 0 0;color:var(--text-2);font-size:14.5px;line-height:1.6}
+
+  /* CTA shared */
+  .cta-card{background:var(--text);color:#fff;border-radius:32px;padding:64px 48px;position:relative;overflow:hidden;
+    background-image:radial-gradient(circle at 0% 0%,rgba(108,99,255,.45),transparent 50%),radial-gradient(circle at 100% 100%,rgba(0,217,255,.3),transparent 55%),linear-gradient(180deg,#15151F,#0F0F1A);margin-top:80px}
+  .cta-card>*{position:relative;z-index:1}
+  .cta-card h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,4vw,46px);font-weight:700;letter-spacing:-0.025em;line-height:1.05;max-width:18ch}
+  .cta-card p{margin:18px 0 0;color:rgba(240,240,246,.7);font-size:17px;max-width:54ch;line-height:1.55}
+  .cta-card .btn-row{margin-top:32px;display:flex;gap:12px;flex-wrap:wrap}
+  .cta-card .btn-ghost{color:#fff;border-color:rgba(255,255,255,.25);background:transparent}
+  .cta-card .btn-ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.5);color:#fff}
+</style>
+</head>
+<body data-page="how">
+<div class="ambient">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+
+<div data-slot="nav"></div>
+
+<main>
+<section class="page-hero wrap">
+  <span class="pill">⚡ Three steps · build a course in one afternoon</span>
+  <h1 class="display">From a folder of files to a working course — in one afternoon.</h1>
+  <p class="lede">Here's exactly what happens between dropping in your first PDF and your team taking lesson one. No magic, no buzzwords, just the actual pipeline.</p>
+</section>
+
+<section class="wrap" style="padding-top:0">
+  <div class="timeline">
+    <div class="tl-rail">
+      <div class="tl-step active">
+        <div class="tl-num">01</div>
+        <span class="tl-label">Upload</span>
+      </div>
+    </div>
+
+    <div class="tl-body">
+      <!-- STEP 01 -->
+      <div class="tl-block">
+        <span class="eyebrow">Step 01 — Upload</span>
+        <h2>Drop in whatever exists. Even if it's "not enough."</h2>
+        <p class="lede">PDFs, DOCX, slides, audio recordings, transcripts, Notion exports, plain Markdown. We handle 14 formats and OCR scanned docs. There is no minimum content threshold — most courses start with under 30 pages of source material.</p>
+
+        <div class="demo panel up-demo">
+          <div class="up-grid">
+            <div class="up-cell"><span class="ftype"><i></i>PDF · Manual</span><span class="name">cashier_handbook_2024.pdf</span><span class="meta">2.4 MB · 47 pages</span><span class="quote">"All shifts begin with the opening checklist on page 12…"</span></div>
+            <div class="up-cell cyan"><span class="ftype"><i></i>Audio · Voice</span><span class="name">aurelija_manager_tips.m4a</span><span class="meta">23 min · auto-transcribed</span><span class="quote">"Honestly the biggest mistake new hires make is rushing the closing count…"</span></div>
+            <div class="up-cell green"><span class="ftype"><i></i>DOCX · Checklist</span><span class="name">safety_checklist.docx</span><span class="meta">312 KB · 4 sections</span><span class="quote">"Never leave the till unattended. Lock the safe before stocking."</span></div>
+            <div class="up-cell"><span class="ftype"><i></i>Notion export</span><span class="name">brand_voice_guide.md</span><span class="meta">8 KB · markdown</span><span class="quote">"We greet every customer within 10 seconds. We never use jargon."</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 02 -->
+      <div class="tl-block">
+        <span class="eyebrow">Step 02 — Find the gaps</span>
+        <h2>Your system tells you what's missing. Specifically.</h2>
+        <p class="lede">Most AI tools just refuse when content is sparse. Ours finds the holes and asks pointed questions — the kind a senior trainer would ask after reading what you sent. Answer them in the dashboard, paste a paragraph, or record a voice reply. Each answer becomes new course material.</p>
+
+        <div class="demo panel gaps">
+          <div class="gaps-h">
+            <b>5 questions to make this course better</b>
+            <span class="badge ai">⚡ AI-suggested</span>
+          </div>
+          <div class="gap-row">
+            <div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg></div>
+            <div><b>What does a perfect first week look like?</b><p>Your handbook covers what people do, but not how the first 5 days should feel. Add this and we'll generate a "Welcome path."</p></div>
+          </div>
+          <div class="gap-row">
+            <div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg></div>
+            <div><b>What mistake do new hires make most often?</b><p>This makes the difference between a textbook and a real training. Audio reply is fine — 60 seconds is enough.</p></div>
+          </div>
+          <div class="gap-row">
+            <div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg></div>
+            <div><b>What should every worker know before they touch anything?</b><p>We'll lock these as prerequisite lessons before practical chapters unlock.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 03 -->
+      <div class="tl-block">
+        <span class="eyebrow">Step 03 — Your team learns</span>
+        <h2>Lessons, quizzes, progress. Live in your product or ours.</h2>
+        <p class="lede">Every course ships as a structured curriculum: chapters, lessons, AI-generated quizzes, scenario practice, and per-learner progress. Embed our dashboard, or use the API to render lessons inside your own product.</p>
+
+        <div class="demo panel learn">
+          <div class="learn-h">
+            <b>Front-of-house onboarding · v1</b>
+            <span class="badge violet">6 lessons · 4 quizzes · 1.4 hrs</span>
+          </div>
+          <div class="learn-grid">
+            <div class="learn-col">
+              <h4>Lessons</h4>
+              <div class="l-lesson"><span class="num">01</span><b>First-day welcome &amp; values</b><span class="dur">4 min</span></div>
+              <div class="l-lesson"><span class="num">02</span><b>Opening checklist</b><span class="dur">6 min</span></div>
+              <div class="l-lesson"><span class="num">03</span><b>Customer interactions</b><span class="dur">11 min</span></div>
+              <div class="l-lesson"><span class="num">04</span><b>Cash handling &amp; closing</b><span class="dur">12 min</span></div>
+              <div class="l-lesson"><span class="num">05</span><b>What to do when things go sideways</b><span class="dur">9 min</span></div>
+              <div class="l-lesson"><span class="num">06</span><b>Wrap-up &amp; certification</b><span class="dur">5 min</span></div>
+            </div>
+            <div class="learn-col">
+              <h4>Quiz · Lesson 03</h4>
+              <div class="quiz">
+                <p class="qh">A customer asks for a refund without a receipt. What do you do first?</p>
+                <div class="quiz-opt"><span class="dot"></span>Refuse politely and direct them to a manager.</div>
+                <div class="quiz-opt correct"><span class="dot"></span>Greet them, ask for the date of purchase, then check the system.</div>
+                <div class="quiz-opt"><span class="dot"></span>Offer store credit immediately to resolve.</div>
+              </div>
+              <p style="margin:14px 0 0;font-size:12px;color:var(--muted)">Generated from "manager-tips.m4a" — 14:22 timestamp</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- spec strip -->
+<section class="wrap" style="padding-top:0">
+  <div class="sec-head">
+    <span class="eyebrow">Under the hood</span>
+    <h2 class="display sec-h">The boring parts you actually care about.</h2>
+  </div>
+
+  <dl class="spec">
+    <div class="spec-row"><dt>Source formats</dt><dd>14<small>PDF, DOCX, MD, HTML, TXT, CSV, M4A, MP3, WAV, MP4, MOV, PPTX, Notion, Confluence</small></dd></div>
+    <div class="spec-row"><dt>Languages</dt><dd>32<small>Including Lithuanian, Latvian, Estonian, Polish, German, English. Mixed-language sources are auto-detected per chunk.</small></dd></div>
+    <div class="spec-row"><dt>Median build time</dt><dd>~1 hr<small>Most courses go from first upload to first published lesson in under an hour.</small></dd></div>
+    <div class="spec-row"><dt>Data residency</dt><dd>EU<small>All processing in Frankfurt and Helsinki. Source files never leave the EU. SOC 2 Type II in progress.</small></dd></div>
+  </dl>
+</section>
+
+<!-- API peek -->
+<section class="wrap" style="padding-top:0">
+  <div class="sec-head">
+    <span class="eyebrow">For builders</span>
+    <h2 class="display sec-h">One API call. A full course back.</h2>
+    <p class="sec-sub">Every dashboard feature is also an endpoint. Pipe sources in, listen for the <code class="mono" style="background:var(--surface);padding:2px 8px;border-radius:6px;font-size:14px">course.ready</code> webhook, render lessons your way.</p>
+  </div>
+
+  <div class="code" role="img" aria-label="API example">
+<span class="c"># POST a folder of source files, get a course back</span><br />
+<span class="k">curl</span> https://api.neuropetitorius.com/v1/courses \<br />
+&nbsp;&nbsp;-H <span class="s">"Authorization: Bearer $NPT_KEY"</span> \<br />
+&nbsp;&nbsp;-F <span class="s">"sources[]=@cashier_handbook.pdf"</span> \<br />
+&nbsp;&nbsp;-F <span class="s">"sources[]=@manager-tips.m4a"</span> \<br />
+&nbsp;&nbsp;-F <span class="s">"target_audience=front_of_house_new_hires"</span><br /><br />
+<span class="c"># 200 OK</span><br />
+{<br />
+&nbsp;&nbsp;<span class="n">"course_id"</span>: <span class="s">"crs_8h2k…"</span>,<br />
+&nbsp;&nbsp;<span class="n">"status"</span>: <span class="s">"building"</span>,<br />
+&nbsp;&nbsp;<span class="n">"estimate_seconds"</span>: <span class="n">2940</span>,<br />
+&nbsp;&nbsp;<span class="n">"webhook"</span>: <span class="s">"course.ready"</span><br />
+}
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="wrap" style="padding-top:0">
+  <div class="faq">
+    <div>
+      <span class="eyebrow">Common questions</span>
+      <h2 class="display sec-h" style="font-size:34px">Still trying to break it?</h2>
+    </div>
+    <div>
+      <details open>
+        <summary>Can I edit the generated lessons?</summary>
+        <p>Yes. Every lesson is editable in the dashboard or via API. Edits are tracked, and re-running the source material won't overwrite your changes unless you explicitly regenerate.</p>
+      </details>
+      <details>
+        <summary>What if my source content is in Lithuanian and I need English?</summary>
+        <p>Source language is auto-detected. You pick the output language per course. Mixed-language source is fine — common in Baltic teams where the manual is English but the manager's voice notes are in Lithuanian.</p>
+      </details>
+      <details>
+        <summary>How do you handle confidential material?</summary>
+        <p>EU-only processing, encrypted at rest, never used for training. You can delete a course (and all derived content) from the dashboard or via DELETE /v1/courses/:id. We'll send you an audit log to confirm.</p>
+      </details>
+      <details>
+        <summary>Does it work with my existing LMS?</summary>
+        <p>SCORM 1.2 and xAPI exports. Direct integrations with Moodle, TalentLMS, and Docebo. For everything else, the API gives you raw lesson content as Markdown + JSON.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="cta-card">
+    <h2>Try the pipeline on your own messy folder.</h2>
+    <p>Free tier includes one course of up to 30 lessons. No credit card. We'll show you what we'd build before you commit a single dollar.</p>
+    <div class="btn-row">
+      <a href="#" class="btn btn-primary btn-lg">Start building for free</a>
+      <a href="Pricing.html" class="btn btn-ghost btn-lg">See pricing</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<div data-slot="footer"></div>
+<script src="shared.js"></script>
+</body>
+</html>
